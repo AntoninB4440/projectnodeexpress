@@ -21,7 +21,7 @@ module.exports = (sequelize,Sequelize) => {
             type : Sequelize.TEXT,
             allowNull : false,
         },
-        birth_date : {
+        birthdate : {
             type : Sequelize.DATEONLY,
             allowNull : false,
         },
