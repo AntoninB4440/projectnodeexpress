@@ -1,6 +1,5 @@
-const dbConfig = require('../config/db.config');
 const Sequelize = require('sequelize');
-
+const dbConfig = require("../config/db.config");
 
 // Création d'un nouvel object Sequelize pour la connection
 const sequelize = new Sequelize(dbConfig.DB, dbConfig.USER, dbConfig.PASSWORD,
@@ -53,7 +52,7 @@ db.comments.belongsTo(db.students);
 db.students.belongsToMany(db.lessons , { through: 'LessonStudents' });
 db.lessons.belongsToMany(db.students , { through: 'LessonStudents' });
 
-db.students.belongsToMany(db.students, { through: 'StudentFriends' });
+db.students.belongsToMany(db.students, { as : 'Friends' , through: 'StudentFriends' });
 
 //Teacher relation with Publication/Comment/Lesson
 db.teachers.hasMany(db.publications);
@@ -70,7 +69,7 @@ db.publications.hasMany(db.comments);
 db.comments.belongsTo(db.publications);
 
 //Lesson relation with Publication
-db.lessons.hasMany(db.lessons);
+db.lessons.hasMany(db.publications);
 db.publications.belongsTo(db.lessons);
 
 module.exports = db;
