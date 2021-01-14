@@ -1,0 +1,26 @@
+{
+  "name": "apistudentteacheruser",
+  "version": "1.0.0",
+  "description": "Use an api storing data about lessons student and teacher",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "Node",
+    "Express",
+    "Sequelize",
+    "SQL",
+    "SQL2",
+    "Body-Parser"
+  ],
+  "author": "Antonin Barcelo",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "express": "^4.17.1",
+    "mysql": "^2.18.1",
+    "mysql2": "^2.2.5",
+    "sequelize": "^6.3.5"
+  }
+}
