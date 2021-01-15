@@ -40,19 +40,20 @@ exports.getAll = async (req , res) => {
     try {
         let studentList = await Student.findAll();
        
-        //console.log(resp);
-
-        let newStudentList = studentList.map( result => {
-           let age = studentService.getYears(result.dataValues.birthdate)
-           console.log('HELLO THERE');
-           console.log(result);
-           //importer le service
-           return new StudentC(result.dataValues.id, result.dataValues.first_name, result.dataValues.last_name, result.dataValues.bio, result.dataValues.level, result.dataValues.birthdate, age)
-        });
-
-        res.json(newStudentList);
-
-
+        if (studentList.length > 0) {
+            let newStudentList = studentList.map( result => {
+                let age = studentService.getYears(result.dataValues.birthdate)
+                console.log('HELLO THERE');
+                console.log(result);
+                //importer le service
+                return new StudentC(result.dataValues.id, result.dataValues.first_name, result.dataValues.last_name, result.dataValues.bio, result.dataValues.level, result.dataValues.birthdate, age)
+             });
+     
+             res.json(newStudentList);
+        } else {
+            res.json(404);
+            res.json({'message :' : 'Empty student list'})
+        }
     } catch (error) {
         res.json(500);
         res.json({'Erreur : ' : error})
@@ -61,7 +62,45 @@ exports.getAll = async (req , res) => {
 };
 
 exports.getById = async (req , res) => {
+    /* //Récupération du token
+    let token = req.headers['x-access-token'];
 
+    //vérification de la validité du token 
+    let verifyToken = jwt.verifyToken(token);
+
+    //si token no valide
+    if(!verifyToken){
+        res.status(401);
+        res.json({'Message : ' : 'Accès interdit veuillez vous identifier'});
+    } else {
+        //si token valide 
+        
+    } */
+
+    try {
+        let studentFound = await Student.findByPk(req.params.id);
+       
+        if (studentFound) {
+            let age = studentService.getYears(studentFound.dataValues.birthdate)
+                
+            let newStudentFound = new StudentC(studentFound.dataValues.id, 
+                studentFound.dataValues.first_name, 
+                studentFound.dataValues.last_name, 
+                studentFound.dataValues.bio, 
+                studentFound.dataValues.level, 
+                studentFound.dataValues.birthdate, 
+                age
+            );
+     
+             res.json(newStudentFound);
+        } else {
+            res.json(404);
+            res.json({'message :' : 'No Student at this ID'})
+        }
+    } catch (error) {
+        res.json(500);
+        res.json({'Erreur : ' : error})
+    }
 };
 
 exports.update = async (req , res) => {
