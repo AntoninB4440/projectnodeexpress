@@ -10,16 +10,20 @@ class Student{
         this.profile_picture = profile_picture;
     }
 
-    static fromJson(data){
-        this.id = data.id;
-        this.first_name = data.first_name;
-        this.last_name = data.last_name;
-        this.bio = data.bio;
-        this.level = data.level;
-        this.birthdate = data.birthdate;
-        this.age = data.age;
-        this.profile_picture = data.profile_picture;
+    static fromJson(jsonData) {
+        console.log("inside method");
+        console.log(jsonData);
+        return new this(jsonData.id,
+            jsonData.first_name,
+            jsonData.last_name,
+            jsonData.bio,
+            jsonData.level,
+            jsonData.birthdate,
+            jsonData.age,
+            jsonData.profile_picture
+        )
     }
+
 }
 
 module.exports = Student;

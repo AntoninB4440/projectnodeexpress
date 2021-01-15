@@ -9,7 +9,7 @@ exports.create = async (req , res) => {
     if (req.body.first_name && req.body.last_name && req.body.bio && req.body.level && req.body.birthdate){
         try {
             let newStudent = await Student.create(req.body);
-            return newStudent ;
+            return newStudent;
         } catch (error) {
             res.status(500);
             res.json({'message : ' : error});
@@ -27,7 +27,6 @@ exports.getAll = async (req , res) => {
 
     //vérification de la validité du token 
     let verifyToken = await jwt.verifyToken(token);
-    //console.log(verifyToken);
 
     //si token no valide
     if(!verifyToken){
@@ -39,9 +38,9 @@ exports.getAll = async (req , res) => {
             let studentList = await Student.findAll();
            
             if (studentList.length > 0) {
-                let newStudentList = studentList.map( async result => {
-                    let age = await studentService.getYears(result.dataValues.birthdate);
-                    return new StudentC.fromJson(result.dataValues);
+                let newStudentList = studentList.map( result => {
+                    result.dataValues.age =studentService.getYears(result.dataValues.birthdate);
+                    return StudentC.fromJson(result.dataValues)
                  });
          
                  res.json(newStudentList);
@@ -74,18 +73,11 @@ exports.getById = async (req , res) => {
             let studentFound = await Student.findByPk(req.params.id);
            
             if (studentFound) {
-                let age = studentService.getYears(studentFound.dataValues.birthdate)
+                studentFound.dataValues.age = studentService.getYears(studentFound.dataValues.birthdate)
                     
-                let newStudentFound = new StudentC(studentFound.dataValues.id, 
-                    studentFound.dataValues.first_name, 
-                    studentFound.dataValues.last_name, 
-                    studentFound.dataValues.bio, 
-                    studentFound.dataValues.level, 
-                    studentFound.dataValues.birthdate, 
-                    age
-                );
+                let newStudentFound = StudentC.fromJson(studentFound.dataValues);
          
-                 res.json(newStudentFound);
+                res.json(newStudentFound);
             } else {
                 res.json(404);
                 res.json({'message :' : 'No Student at this ID'})
