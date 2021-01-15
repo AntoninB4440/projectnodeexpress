@@ -1,15 +1,17 @@
 let  db = require('../models/db');
 let jwt = require('../services/auth.services');
-const Student = db.students;
-const studentService = require('../services/students.services');
-let  StudentC = require('../models/student.class');
+
+const TeacherC = require('../models/teacher.class');
+
+const Teacher = db.teachers;
+
 
 
 exports.create = async (req , res) => {
-    if (req.body.first_name && req.body.last_name && req.body.bio && req.body.level && req.body.birthdate){
+    if (req.body.first_name && req.body.last_name && req.body.bio && req.body.subject){
         try {
-            let newStudent = await Student.create(req.body);
-            return newStudent ;
+            let newTeacher = await Teacher.create(req.body);
+            return newTeacher;
         } catch (error) {
             res.status(500);
             res.json({'message : ' : error});
@@ -20,14 +22,13 @@ exports.create = async (req , res) => {
     }
 };
 
-exports.getAll = async (req , res) => {
+/* exports.getAll = async (req , res) => {
     
     //Récupération du token
     let token = req.headers['x-access-token'];
 
     //vérification de la validité du token 
     let verifyToken = await jwt.verifyToken(token);
-    console.log(verifyToken);
 
     //si token no valide
     if(!verifyToken){
@@ -155,4 +156,4 @@ exports.remove = async (req , res) => {
            res.json({ error: e });
         }
     }
-};
+}; */
