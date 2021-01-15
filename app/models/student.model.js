@@ -27,7 +27,7 @@ module.exports = (sequelize,Sequelize) => {
         },
         age : {
             type : Sequelize.INTEGER,
-            allowNull : false,
+            allowNull : true,
         },
         profile_picture : {
             type : Sequelize.TEXT,
