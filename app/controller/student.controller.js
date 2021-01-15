@@ -33,8 +33,7 @@ exports.getAll = async (req , res) => {
         res.status(401);
         res.json({'Message : ' : 'Accès interdit veuillez vous identifier'});
     } else {
-        //si token valide 
-        
+        //si token valide
     } */
 
     try {
@@ -42,10 +41,7 @@ exports.getAll = async (req , res) => {
        
         if (studentList.length > 0) {
             let newStudentList = studentList.map( result => {
-                let age = studentService.getYears(result.dataValues.birthdate)
-                console.log('HELLO THERE');
-                console.log(result);
-                //importer le service
+                let age = studentService.getYears(result.dataValues.birthdate);
                 return new StudentC(result.dataValues.id, result.dataValues.first_name, result.dataValues.last_name, result.dataValues.bio, result.dataValues.level, result.dataValues.birthdate, age)
              });
      
@@ -104,9 +100,62 @@ exports.getById = async (req , res) => {
 };
 
 exports.update = async (req , res) => {
+    /* //Récupération du token
+    let token = req.headers['x-access-token'];
 
+    //vérification de la validité du token 
+    let verifyToken = jwt.verifyToken(token);
+
+    //si token no valide
+    if(!verifyToken){
+        res.status(401);
+        res.json({'Message : ' : 'Accès interdit veuillez vous identifier'});
+    } else {
+        //si token valide 
+        
+    } */
+
+    try {
+        await Student.update(req.body, {
+          where: {
+             id: req.params.id
+          }
+       });
+         res.json({id:req.params.id,...req.body});
+    } catch (e) {
+       resp.json(500);
+       resp.json({ error: e });
+    }
+ 
 };
 
 exports.remove = async (req , res) => {
+    /* //Récupération du token
+    let token = req.headers['x-access-token'];
 
+    //vérification de la validité du token 
+    let verifyToken = jwt.verifyToken(token);
+
+    //si token no valide
+    if(!verifyToken){
+        res.status(401);
+        res.json({'Message : ' : 'Accès interdit veuillez vous identifier'});
+    } else {
+        //si token valide 
+        
+    } */
+
+    try {
+        await Student.destroy({
+          where: {
+             id: req.params.id
+          }
+        });
+    res.status(200);
+         res.json({"message":`The student with the id ${req.params.id} has been removed`});
+    } catch (e) {
+       res.json(500);
+       res.json({ error: e });
+    }
+ 
 };
