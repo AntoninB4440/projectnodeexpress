@@ -27,7 +27,7 @@ exports.getAll = async (req , res) => {
 
     //vérification de la validité du token 
     let verifyToken = await jwt.verifyToken(token);
-    console.log(verifyToken);
+    //console.log(verifyToken);
 
     //si token no valide
     if(!verifyToken){
@@ -39,9 +39,9 @@ exports.getAll = async (req , res) => {
             let studentList = await Student.findAll();
            
             if (studentList.length > 0) {
-                let newStudentList = studentList.map( result => {
-                    let age = studentService.getYears(result.dataValues.birthdate);
-                    return new StudentC(result.dataValues.id, result.dataValues.first_name, result.dataValues.last_name, result.dataValues.bio, result.dataValues.level, result.dataValues.birthdate, age)
+                let newStudentList = studentList.map( async result => {
+                    let age = await studentService.getYears(result.dataValues.birthdate);
+                    return new StudentC.fromJson(result.dataValues);
                  });
          
                  res.json(newStudentList);

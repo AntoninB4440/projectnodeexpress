@@ -22,7 +22,7 @@ exports.create = async (req , res) => {
     }
 };
 
-/* exports.getAll = async (req , res) => {
+exports.getAll = async (req , res) => {
     
     //Récupération du token
     let token = req.headers['x-access-token'];
@@ -114,7 +114,7 @@ exports.update = async (req , res) => {
     } else {
         //si token valide 
         try {
-            await Student.update(req.body, {
+            await Teacher.update(req.body, {
               where: {
                  id: req.params.id
               }
@@ -125,10 +125,7 @@ exports.update = async (req , res) => {
            resp.json({ error: e });
         }
     }
-
-    
- 
-};
+}
 
 exports.remove = async (req , res) => {
     //Récupération du token
@@ -156,4 +153,4 @@ exports.remove = async (req , res) => {
            res.json({ error: e });
         }
     }
-}; */
+}
