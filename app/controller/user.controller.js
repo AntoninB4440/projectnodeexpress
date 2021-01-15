@@ -118,11 +118,67 @@ exports.createSorT = async (req,res) => {
 
 ///////////////////////////////////////////////////PUT METHOD
 exports.modifyEmail = async (req,res) => {
+    //Récupération du token
+    let token = req.headers['x-access-token'];
+
+    //vérification de la validité du token 
+    let verifyToken = await jwt.verifyToken(token);
+
+    //si token no valide
+    if(!verifyToken){
+        res.status(401);
+        res.json({'Message : ' : 'Accès interdit veuillez vous identifier'});
+    }
+
+    if (req.body.email){
+        try {
+            let user = await Users.update({email : req.body.email} , { where: {
+                id: verifyToken
+            }})
+            res.json({"Votre email a été changé en " : req.body.email })
+        } catch (error) {
+            
+        }
+    } else {
+        res.status(400);
+        res.json({'message' : "bad request sorry"})
+    }
     
 }
 
 exports.modifyPW = async (req,res) => {
-    
+    //Récupération du token
+    let token = req.headers['x-access-token'];
+
+    //vérification de la validité du token 
+    let verifyToken = await jwt.verifyToken(token);
+
+    //si token no valide
+    if(!verifyToken){
+        res.status(401);
+        res.json({'Message : ' : 'Accès interdit veuillez vous identifier'});
+    }
+
+    if (req.body.old_password && req.body.new_password){
+        try {
+            let user = await Users.findByPk(verifyToken);
+            if (user._previousDataValues.password !== req.body.old_password || user._previousDataValues.password === req.new_password){
+                res.status(409);
+                res.json({'message' : 'Old password does not match or new password can not be your old password '})
+            } else {
+                await Users.update({password : req.body.new_password} , { where: {
+                    id: verifyToken
+                }})
+                res.json({"message " : "Your password has been changed"})
+            }
+        } catch (error) {
+            res.json(500);
+            res.json({"message " : erorr});
+        }
+    } else {
+        res.status(400);
+        res.json({'message' : "bad request sorry"})
+    }
 }
 
 exports.modifySorT = async (req,res) => {
