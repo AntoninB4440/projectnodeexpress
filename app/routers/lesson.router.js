@@ -10,4 +10,8 @@ router.post('/', lessonController.create);
 
 router.put('/:id', lessonController.update);
 
-router.delete('/:id', lessonController.remove); */
+router.delete('/:id', lessonController.remove);
+
+module.exports = router;
+
+*/
