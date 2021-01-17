@@ -38,62 +38,114 @@ exports.getById = async (req , res) => {
 
 //////////////////POST METHOD
 exports.create = async (req , res) => {
-    if (req.body.title && req.body.hours && req.body.description && req.body.starting_date && req.body.ending_date) {
+    let token = req.headers['x-access-token'];
 
-        try {
-            let newLesson = await Lesson.create(req.body);
-            res.json(newLesson);
-        } catch (e) {
-            res.status(500)
-            res.json({ error: e });
-        }
-         
-    } else {
-        res.status(400)
-        res.json({error: `Few fields missing, please fill all the fields`});
+    //vérification de la validité du token 
+    let verifyToken = await jwt.verifyToken(token);
+
+    //si token no valide
+    if(!verifyToken){
+        res.status(401);
+        res.json({'Message : ' : 'Accès interdit veuillez vous identifier'});
     }
+
+    let user = Users.findByPk(verifyToken);
+
+    if (user.type === 1){
+        res.status(401);
+        res.json({'Message : ' : `Sorry you are a student, you can't create a lesson`});
+    } else if (user.type === 2 ){
+        if (req.body.title && req.body.hours && req.body.description && req.body.starting_date && req.body.ending_date) {
+            try {
+                let newLesson = await Lesson.create(req.body);
+                res.json(newLesson);
+            } catch (e) {
+                res.status(500)
+                res.json({ error: e });
+            }
+             
+        } else {
+            res.status(400)
+            res.json({error: `Few fields missing, please fill all the fields`});
+        }
+    }
+    
 };
 
 /////////////////UPDATE METHOD
 exports.update = async (req , res) => {
-    if (req.body.title && req.body.hours && req.body.description && req.body.starting_date && req.body.ending_date && req.params.id) {
-        try {
-            await Lesson.update(req.body, {
-                where: {
-                    id: req.params.id
-                }
-            });
+    let token = req.headers['x-access-token'];
 
-            res.json({ id: req.params.id, ...req.body });
-        } catch (e) {
-            res.json(500);
-            res.json({ error: e });
-        }
-               
-    } else {
-        res.status(400);
-        res.json({error: 'bad request'});
+    //vérification de la validité du token 
+    let verifyToken = await jwt.verifyToken(token);
+
+    //si token no valide
+    if(!verifyToken){
+        res.status(401);
+        res.json({'Message : ' : 'Acces denied, please authenticate yourself'});
     }
 
+    let user = Users.findByPk(verifyToken);
+
+    if (user.type === 1){
+        res.status(401);
+        res.json({'Message : ' : `Sorry you are a student, you can't update a lesson`});
+    } else if (user.type === 2 ){
+        if (req.body.title && req.body.hours && req.body.description && req.body.starting_date && req.body.ending_date && req.params.id) {
+            try {
+                await Lesson.update(req.body, {
+                    where: {
+                        id: req.params.id
+                    }
+                });
+    
+                res.json({ id: req.params.id, ...req.body });
+            } catch (e) {
+                res.json(500);
+                res.json({ error: e });
+            }
+                   
+        } else {
+            res.status(400);
+            res.json({error: 'bad request'});
+        }
+    }
 };
 
 ////////////////DELETE METHOD
 exports.remove = async (req , res) => {
-    if (req.params.id) {
-        try {
-            await Lesson.destroy({
-                where: {
-                    id: req.params.id
-                }
-            });
-            res.json({"message : " : `The lesson with the id ${req.params.id} has been removed`})
-        } catch (e) {
-        res.status(500)
-        res.json({ "message": e });
-        }
-    } else {
-        res.status(400);
-        res.json({'message : ' : "Bad request sorry"})
+    let token = req.headers['x-access-token'];
+
+    //vérification de la validité du token 
+    let verifyToken = await jwt.verifyToken(token);
+
+    //si token no valide
+    if(!verifyToken){
+        res.status(401);
+        res.json({'Message : ' : 'Acces denied, please authenticate yourself'});
     }
 
+    let user = Users.findByPk(verifyToken);
+
+    if (user.type === 1){
+        res.status(401);
+        res.json({'Message : ' : `Sorry you are a student, you can't update a lesson`});
+    } else if (user.type === 2 ){
+        if (req.params.id) {
+            try {
+                await Lesson.destroy({
+                    where: {
+                        id: req.params.id
+                    }
+                });
+                res.json({"message : " : `The lesson with the id ${req.params.id} has been removed`})
+            } catch (e) {
+            res.status(500)
+            res.json({ "message": e });
+            }
+        } else {
+            res.status(400);
+            res.json({'message : ' : "Bad request sorry"})
+        }
+    }
 };
