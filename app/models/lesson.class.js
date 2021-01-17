@@ -1,4 +1,4 @@
-class Student{
+class Lesson{
     constructor(id,title,hours,description,file_name,starting_date,ending_date,is_finished){
         this.id = id;
         this.title = title;
@@ -9,6 +9,21 @@ class Student{
         this.ending_date = ending_date;
         this.is_finished = is_finished;
     }
+
+    static fromJson(jsonData) {
+        //console.log("inside method");
+        //console.log(jsonData);
+        return new this(jsonData.id,
+            jsonData.title,
+            jsonData.hours,
+            jsonData.description,
+            jsonData.file_name,
+            jsonData.starting_date,
+            jsonData.ending_date,
+            jsonData.is_finished
+        )
+    }
+
 }
 
-module.exports = Student;
+module.exports = Lesson;

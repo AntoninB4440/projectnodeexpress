@@ -1,4 +1,4 @@
-/* const lessonController = require('../controller/lesson.controler');
+const lessonController = require('../controller/lesson.controler');
 var express = require('express');
 var router = express.Router();
 
@@ -14,4 +14,3 @@ router.delete('/:id', lessonController.remove);
 
 module.exports = router;
 
-*/
