@@ -3,6 +3,7 @@ let jwt = require('../services/auth.services');
 let studentController = require('../controller/student.controller');
 let teacherController = require('../controller/teacher.controller');
 
+const Teachers = db.teachers;
 const Students = db.students;
 const Users = db.users;
 
@@ -261,9 +262,17 @@ exports.remove = async (req,res) => {
 
     try {
         let user = await Users.findOne( {where : { id : verifyToken}});
-        await Students.destroy( { where : { id : user.StudentId}});
-        await Users.destroy( {where : {id : verifyToken }});
-        res.json({ 'Message :' : "Your profile has been removed"})
+
+        if (user.type === 1 ){
+            await Students.destroy( { where : { id : user.StudentId}});
+            await Users.destroy( {where : {id : verifyToken }});
+            res.json({ 'Message :' : "Your profile (student) has been removed"})
+
+        } else if (user.type === 2) {
+            await Teachers.destroy( { where : { id : user.TeacherId}});
+            await Users.destroy( {where : {id : verifyToken }});
+            res.json({ 'Message :' : "Your profile (student) has been removed"})
+        }
     } catch (error) {
         res.status(500);
         res.json({ " message " : error})
