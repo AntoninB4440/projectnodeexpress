@@ -104,8 +104,6 @@ exports.addLesson = async (req,res) => {
             let user = await Users.findByPk(verifyToken);
             let teacher = await Teachers.findByPk(user.TeacherId);
             let lesson = await Lessons.findByPk(req.params.id);
-            console.log(teacher);
-            console.log(lesson);
             if(!lesson){
                 res.json(404)
                 res.json({"Message :" : "No lesson with this ID sorry"})
@@ -157,7 +155,7 @@ exports.remove = async (req , res) => {
     let token = req.headers['x-access-token'];
 
     //vérification de la validité du token 
-    let verifyToken = jwt.verifyToken(token);
+    let verifyToken = await jwt.verifyToken(token);
 
     //si token no valide
     if(!verifyToken){
