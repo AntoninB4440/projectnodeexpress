@@ -8,6 +8,7 @@ const { students } = require('../models/db');
 
 const Students = db.students;
 const Users = db.users;
+const Lessons = db.lessons;
 
 ////////////////////// GET METHOD
 exports.getAll = async (req , res) => {
@@ -25,11 +26,11 @@ exports.getAll = async (req , res) => {
     } else {
         //si token valide
         try {
-            let studentList = await Student.findAll();
+            let studentList = await Students.findAll();
            
             if (studentList.length > 0) {
                 let newStudentList = studentList.map( result => {
-                    result.dataValues.age =studentService.getYears(result.dataValues.birthdate);
+                    result.dataValues.age = studentService.getYears(result.dataValues.birthdate);
                     return StudentC.fromJson(result.dataValues)
                  });
          
@@ -39,6 +40,7 @@ exports.getAll = async (req , res) => {
                 res.json({'message :' : 'Empty student list'})
             }
         } catch (error) {
+            console.log(error)
             res.json(500);
             res.json({'Erreur : ' : error})
         }
@@ -60,7 +62,7 @@ exports.getById = async (req , res) => {
     } else {
         //si token valide 
         try {
-            let studentFound = await Student.findByPk(req.params.id);
+            let studentFound = await Students.findByPk(req.params.id);
            
             if (studentFound) {
                 studentFound.dataValues.age = studentService.getYears(studentFound.dataValues.birthdate)
@@ -85,7 +87,7 @@ exports.getById = async (req , res) => {
 exports.create = async (req , res) => {
     if (req.body.first_name && req.body.last_name && req.body.bio && req.body.level && req.body.birthdate){
         try {
-            let newStudent = await Student.create(req.body);
+            let newStudent = await Students.create(req.body);
             return newStudent;
         } catch (error) {
             res.status(500);
@@ -115,7 +117,7 @@ exports.addFriend = async (req, res) => {
             let user = await Users.findByPk(verifyToken);
             let student1 = await Students.findByPk(user.StudentId);
             let student2 = await Students.findByPk(req.params.id);
-            await student1.setFriends(student2);
+            await student1.setLessons(student2);
             res.json({'Message : ' : ` ${student2.dataValues.first_name} has been added to your friend list `});
         } catch (error) {
             res.status(500);
@@ -129,7 +131,33 @@ exports.addFriend = async (req, res) => {
 };
 
 exports.addLesson = async (req,res) => {
+    //Récupération du token
+    let token = req.headers['x-access-token'];
 
+    //vérification de la validité du token 
+    let verifyToken = await jwt.verifyToken(token);
+
+    //si token no valide
+    if(!verifyToken){
+        res.status(401);
+        res.json({'Message : ' : 'Accès interdit veuillez vous identifier'});
+    }
+
+    if(req.params.id){
+        try {
+            let user = await Users.findByPk(verifyToken);
+            let student = await Students.findByPk(user.StudentId);
+            let lesson = await Lessons.findByPk(req.params.id);
+            await student.setLessons(lesson);
+            res.json({'Message : ' : `You just sign in for the lesson ${lesson.dataValues.title}`});
+        } catch (error) {
+            res.status(500);
+            console.log(error);
+        }
+    } else {
+        res.json(404);
+        res.json({'message :' : 'No Student at this ID'})
+    }
 };
 
 ////////////////////////UPDATE METHOD
@@ -147,7 +175,7 @@ exports.update = async (req , res) => {
     } else {
         //si token valide 
         try {
-            await Student.update(req.body, {
+            await Students.update(req.body, {
               where: {
                  id: req.params.id
               }
@@ -176,7 +204,7 @@ exports.remove = async (req , res) => {
     } else {
         //si token valide 
         try {
-            await Student.destroy({
+            await Students.destroy({
               where: {
                  id: req.params.id
               }
