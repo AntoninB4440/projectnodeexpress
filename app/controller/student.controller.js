@@ -117,7 +117,7 @@ exports.addFriend = async (req, res) => {
             let user = await Users.findByPk(verifyToken);
             let student1 = await Students.findByPk(user.StudentId);
             let student2 = await Students.findByPk(req.params.id);
-            await student1.setLessons(student2);
+            await student1.setFriends(student2);
             res.json({'Message : ' : ` ${student2.dataValues.first_name} has been added to your friend list `});
         } catch (error) {
             res.status(500);

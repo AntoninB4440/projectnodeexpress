@@ -102,8 +102,10 @@ exports.addLesson = async (req,res) => {
     if(req.params.id){
         try {
             let user = await Users.findByPk(verifyToken);
-            let teacher = await Teachers.findByPk(user.StudentId);
+            let teacher = await Teachers.findByPk(user.TeacherId);
             let lesson = await Lessons.findByPk(req.params.id);
+            console.log(teacher);
+            console.log(lesson);
             if(!lesson){
                 res.json(404)
                 res.json({"Message :" : "No lesson with this ID sorry"})
