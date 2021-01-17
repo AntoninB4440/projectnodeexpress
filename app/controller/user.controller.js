@@ -3,12 +3,41 @@ let jwt = require('../services/auth.services');
 let studentController = require('../controller/student.controller');
 let teacherController = require('../controller/teacher.controller');
 
+const Students = db.students;
 const Users = db.users;
 
 
 //////////////////////////////////////////////GET METHOD 
 exports.getUserInfo = async (req,res) => {
+    //Récupération du token
+    let token = req.headers['x-access-token'];
 
+    //vérification de la validité du token 
+    let verifyToken = await jwt.verifyToken(token);
+
+    //si token no valide
+    if(!verifyToken){
+        res.status(401);
+        res.json({'Message : ' : 'Accès interdit veuillez vous identifier'});
+    }
+
+    try {
+        const user = await Users.findOne({where : { id : verifyToken}});
+        if (user.type === 1 ){
+            let student = await user.getStudent();
+            res.json({
+                student : student
+            });
+        } else if (user.type === 2) {
+            let teacher = await user.getTeacher();
+            res.json({
+                teacher : teacher
+            });
+        }
+    } catch (error) {
+        res.status(500);
+        res.json({ " message " : error})
+    }
 }
 
 //////////////////////////////////////////////POST METHOD
@@ -32,7 +61,6 @@ exports.register = async (req,res) => {
 }
 
 exports.login = async (req,res) => {
-
     if (req.body.email && req.body.password){
         //Trouver le user correspondant au mail
         try {
@@ -53,7 +81,7 @@ exports.login = async (req,res) => {
                         student : student,
                         token : token
                     });
-                } else {
+                } else if (user.type === 2) {
                     let teacher = await user.getTeacher();
                     res.json({
                         user : user,
@@ -182,11 +210,62 @@ exports.modifyPW = async (req,res) => {
 }
 
 exports.modifySorT = async (req,res) => {
-    
+    //Récupération du token
+    let token = req.headers['x-access-token'];
+
+    //vérification de la validité du token 
+    let verifyToken = await jwt.verifyToken(token);
+
+    //si token no valide
+    if(!verifyToken){
+        res.status(401);
+        res.json({'Message : ' : 'Accès interdit veuillez vous identifier'});
+    }
+
+    try {
+        const user = await Users.findOne({where : { id : verifyToken}});
+        if (user.type === 1 ){
+            let student = await user.getStudent();
+            let studentUpdate = await student.update(req.body);
+            //console.log(studentUpdate);
+            res.json({
+                student : studentUpdate
+            });
+        } else if (user.type === 2) {
+            let teacher = await user.getTeacher();
+            let teacherUpdate = await teacher.update(req.body);
+            res.json({
+                teacher : teacherUpdate
+            });
+        }
+    } catch (error) {
+        res.status(500);
+        res.json({ " message " : error})
+    }
 }
 
 
 ///////////////////////////////////////////////////DELETE METHOD
 exports.remove = async (req,res) => {
-    
+    //Récupération du token
+    let token = req.headers['x-access-token'];
+
+    //vérification de la validité du token 
+    let verifyToken = await jwt.verifyToken(token);
+
+    //si token no valide
+    if(!verifyToken){
+        res.status(401);
+        res.json({'Message : ' : 'Accès interdit veuillez vous identifier'});
+    }
+
+    try {
+        let user = await Users.findOne( {where : { id : verifyToken}});
+        await Students.destroy( { where : { id : user.StudentId}});
+        await Users.destroy( {where : {id : verifyToken }});
+        res.json({ 'Message :' : "Your profile has been removed"})
+    } catch (error) {
+        res.status(500);
+        res.json({ " message " : error})
+    }
 }

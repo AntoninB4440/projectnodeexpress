@@ -36,8 +36,8 @@ db.users = require('./user.model')(sequelize,Sequelize);
 
 //Etablissement des relations entre les tables
 //User relation with Teacher and Student (One to One)
-db.students.hasOne(db.users);
-db.users.belongsTo(db.students);
+db.students.hasOne(db.users , {onDelete : 'CASCADE'});
+db.users.belongsTo(db.students, {foreignKey : 'StudentId', onDelete : 'CASCADE'});
 
 db.teachers.hasOne(db.users);
 db.users.belongsTo(db.teachers);

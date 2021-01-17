@@ -11,8 +11,8 @@ class Student{
     }
 
     static fromJson(jsonData) {
-        console.log("inside method");
-        console.log(jsonData);
+        //console.log("inside method");
+        //console.log(jsonData);
         return new this(jsonData.id,
             jsonData.first_name,
             jsonData.last_name,
