@@ -148,6 +148,10 @@ exports.addLesson = async (req,res) => {
             let user = await Users.findByPk(verifyToken);
             let student = await Students.findByPk(user.StudentId);
             let lesson = await Lessons.findByPk(req.params.id);
+            if(!lesson){
+                res.json(404)
+                res.json({"Message :" : "No lesson with this ID sorry"})
+            }
             await student.setLessons(lesson);
             res.json({'Message : ' : `You just sign in for the lesson ${lesson.dataValues.title}`});
         } catch (error) {
