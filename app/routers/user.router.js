@@ -6,9 +6,9 @@ router.get('/me' , userController.getUserInfo);
 
 router.post('/me' , userController.createSorT);
 
-router.post('/login', userController.login);
+router.post('/auth/login', userController.login);
 
-router.post('/register' , userController.register);
+router.post('/auth/register' , userController.register);
 
 router.put('/me/modify-email', userController.modifyEmail);
 
