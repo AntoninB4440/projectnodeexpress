@@ -10,6 +10,20 @@ const Publication = db.publications;
 
 //////////////////////////////GET METHOD
 exports.getAll = async(req,res) => {
+
+    //Récupération du token
+    let token = req.headers['x-access-token'];
+
+    //vérification de la validité du token 
+    let verifyToken = await jwt.verifyToken(token);
+
+    //si token no valide
+    if(!verifyToken){
+        res.status(401);
+        res.json({'Message : ' : 'Accès interdit veuillez vous identifier'});
+        return;
+    }
+
     try {
         let listePublication = await Publication.findAll();
         if (listePublication.length === 0){
@@ -27,6 +41,20 @@ exports.getAll = async(req,res) => {
 };
 
 exports.getById = async (req,res) => {
+
+    //Récupération du token
+    let token = req.headers['x-access-token'];
+
+    //vérification de la validité du token 
+    let verifyToken = await jwt.verifyToken(token);
+
+    //si token no valide
+    if(!verifyToken){
+        res.status(401);
+        res.json({'Message : ' : 'Accès interdit veuillez vous identifier'});
+        return;
+    }
+    
     try {
         const publiFound = await Publication.findByPk(req.params.id);
         if (publiFound === null){

@@ -1,7 +1,6 @@
 let db = require('../models/db');
 let jwt = require('../services/auth.services');
 
-const Lessons = db.lessons;
 const Teachers = db.teachers;
 const Students = db.students;
 const Users = db.users;
@@ -10,6 +9,20 @@ const Comment = db.comments;
 
 //////////////////////////////GET METHOD
 exports.getAll = async(req,res) => {
+
+    //Récupération du token
+    let token = req.headers['x-access-token'];
+
+    //vérification de la validité du token 
+    let verifyToken = await jwt.verifyToken(token);
+
+    //si token no valide
+    if(!verifyToken){
+        res.status(401);
+        res.json({'Message : ' : 'Accès interdit veuillez vous identifier'});
+        return;
+    }
+
     try {
         let listeComment= await Comment.findAll();
         if (!listeComment.length === 0){
@@ -27,6 +40,20 @@ exports.getAll = async(req,res) => {
 };
 
 exports.getById = async (req,res) => {
+
+    //Récupération du token
+    let token = req.headers['x-access-token'];
+
+    //vérification de la validité du token 
+    let verifyToken = await jwt.verifyToken(token);
+
+    //si token no valide
+    if(!verifyToken){
+        res.status(401);
+        res.json({'Message : ' : 'Accès interdit veuillez vous identifier'});
+        return;
+    }
+
     try {
         const commentFound = await Comment.findByPk(req.params.id);
         if (commentFound === null){
