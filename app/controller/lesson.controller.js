@@ -5,7 +5,6 @@ const db = require('../models/db');
 const Lesson = db.lessons;
 const Users = db.users;
 
-
 const lessonService = require('../services/lessons.services');
 
 ///////////////////GET METHOD

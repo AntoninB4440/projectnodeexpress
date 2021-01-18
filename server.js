@@ -5,6 +5,7 @@ const lessons = require('./app/routers/lesson.router');
 const students = require('./app/routers/student.router');
 const users = require('./app/routers/user.router');
 const teachers = require('./app/routers/teacher.router')
+const publications = require('./app/routers/publication.router');
 
 
 var app = express();
@@ -16,6 +17,7 @@ app.use('/lessons', lessons);
 app.use('/students', students);
 app.use('/users', users);
 app.use('/teachers', teachers);
+app.use('/publications' , publications);
 
 
 db.sequelize.sync();

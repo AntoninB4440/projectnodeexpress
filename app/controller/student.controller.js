@@ -23,7 +23,8 @@ exports.getAll = async (req , res) => {
     if(!verifyToken){
         res.status(401);
         res.json({'Message : ' : 'Accès interdit veuillez vous identifier'});
-    } else {
+        return;
+    }
         //si token valide
         try {
             let studentList = await Students.findAll();
@@ -44,7 +45,7 @@ exports.getAll = async (req , res) => {
             res.json(500);
             res.json({'Erreur : ' : error})
         }
-    }
+    
 
 };
 
@@ -59,7 +60,8 @@ exports.getById = async (req , res) => {
     if(!verifyToken){
         res.status(401);
         res.json({'Message : ' : 'Accès interdit veuillez vous identifier'});
-    } else {
+        return;
+    }
         //si token valide 
         try {
             let studentFound = await Students.findByPk(req.params.id);
@@ -78,7 +80,7 @@ exports.getById = async (req , res) => {
             res.json(500);
             res.json({'Erreur : ' : error})
         }
-    }
+    
 
     
 };
@@ -110,23 +112,23 @@ exports.addFriend = async (req, res) => {
     if(!verifyToken){
         res.status(401);
         res.json({'Message : ' : 'Accès interdit veuillez vous identifier'});
+        return;
     }
 
-    if(req.params.id){
         try {
             let user = await Users.findByPk(verifyToken);
             let student1 = await Students.findByPk(user.StudentId);
             let student2 = await Students.findByPk(req.params.id);
+            if (student2 === null){
+                res.json(404);
+                res.json({'message :' : 'No Student at this ID'})
+            }
             await student1.setFriends(student2);
             res.json({'Message : ' : ` ${student2.dataValues.first_name} has been added to your friend list `});
         } catch (error) {
             res.status(500);
             console.log(error);
         }
-    } else {
-        res.json(404);
-        res.json({'message :' : 'No Student at this ID'})
-    }
     
 };
 
@@ -141,9 +143,9 @@ exports.addLesson = async (req,res) => {
     if(!verifyToken){
         res.status(401);
         res.json({'Message : ' : 'Accès interdit veuillez vous identifier'});
+        return;
     }
 
-    if(req.params.id){
         try {
             let user = await Users.findByPk(verifyToken);
             let student = await Students.findByPk(user.StudentId);
@@ -158,10 +160,6 @@ exports.addLesson = async (req,res) => {
             res.status(500);
             console.log(error);
         }
-    } else {
-        res.json(404);
-        res.json({'message :' : 'No Student at this ID'})
-    }
 };
 
 ////////////////////////UPDATE METHOD
@@ -176,7 +174,8 @@ exports.update = async (req , res) => {
     if(!verifyToken){
         res.status(401);
         res.json({'Message : ' : 'Accès interdit veuillez vous identifier'});
-    } else {
+        return;
+    } 
         //si token valide 
         try {
             await Students.update(req.body, {
@@ -189,7 +188,7 @@ exports.update = async (req , res) => {
            resp.json(500);
            resp.json({ error: e });
         }
-    }
+    
 };
 
 
@@ -205,7 +204,8 @@ exports.remove = async (req , res) => {
     if(!verifyToken){
         res.status(401);
         res.json({'Message : ' : 'Accès interdit veuillez vous identifier'});
-    } else {
+        return;
+    } 
         //si token valide 
         try {
             await Students.destroy({
@@ -219,7 +219,7 @@ exports.remove = async (req , res) => {
            res.json(500);
            res.json({ error: e });
         }
-    }
+    
 };
 
 exports.removeFriend = async (req,res) => {
@@ -235,19 +235,19 @@ exports.removeFriend = async (req,res) => {
         res.json({'Message : ' : 'Accès interdit veuillez vous identifier'});
     }
 
-    if(req.params.id){
+    
         try {
             let user = await Users.findByPk(verifyToken);
             let student1 = await Students.findByPk(user.StudentId);
             let student2 = await Students.findByPk(req.params.id);
+            if (student2 === null){
+                res.json(404);
+                res.json({'message :' : 'No Student in your friend list with this ID'})
+            }
             await student1.removeFriends(student2);
             res.json({'Message : ' : `${student2.dataValues.first_name} has been removed from you friend list`});
         } catch (error) {
             res.status(500);
             console.log(error);
         }
-    } else {
-        res.json(404);
-        res.json({'message :' : 'No Friend at this ID'})
-    }
 };
